@@ -403,6 +403,57 @@ result = []
 transform(root)
 
 print(*result)
+\`\`\`
+
+Problem I
+
+\`\`\`python
+N, K = map(int, input().split())
+a = list(map(int, input().split()))
+
+if K > N:
+    print(-1)
+else:
+    a.sort()
+    print(a[K - 1])
+\`\`\`
+
+Problem J
+
+\`\`\`python
+n = int(input())
+p = list(map(int, input().split()))
+
+pos = [0] * (n + 1)
+
+for i in range(n):
+    pos[p[i]] = i
+
+left = [-1] * (n + 1)
+right = [-1] * (n + 1)
+stack = []
+
+for value in range(1, n + 1):
+    last = -1
+
+    while stack and pos[stack[-1]] > pos[value]:
+        last = stack.pop()
+
+    if stack:
+        right[stack[-1]] = value
+
+    if last != -1:
+        left[value] = last
+
+    stack.append(value)
+
+leaves = 0
+
+for value in range(1, n + 1):
+    if left[value] == -1 and right[value] == -1:
+        leaves += 1
+
+print(leaves)
 \`\`\``);
 });
 
