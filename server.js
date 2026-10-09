@@ -8,7 +8,41 @@ const port = Number(process.env.PORT) || 3000;
 app.use(cors());
 
 app.get('/', (_request, response) => {
-  response.type('text/plain').send(`Problem A — Mountains
+  response.type('text/plain').send(`Basic BST algorithm
+
+\`\`\`python
+class Node:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+
+n = int(input())
+a = list(map(int, input().split()))
+
+root = Node(a[0])
+
+for value in a[1:]:
+    current = root
+
+    while True:
+        if value < current.value:
+            if current.left is None:
+                current.left = Node(value)
+                break
+
+            current = current.left
+
+        else:
+            if current.right is None:
+                current.right = Node(value)
+                break
+
+            current = current.right
+\`\`\`
+
+Problem A — Mountains
 
 \`\`\`python
 import sys
