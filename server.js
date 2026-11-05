@@ -4,490 +4,88 @@ const cors = require('cors');
 const app = express();
 const port = Number(process.env.PORT) || 3000;
 
-// Разрешаем запросы из любого источника.
 app.use(cors());
 
 app.get('/', (_request, response) => {
-  response.type('text/plain').send(`Basic BST algorithm
+  response.type('text/plain').send(`Problem A — Simple Merge
 
 \`\`\`python
-class Node:
-    def __init__(self, value):
-        self.value = value
-        self.left = None
-        self.right = None
+t = int(input())
 
-
-n = int(input())
-a = list(map(int, input().split()))
-
-root = Node(a[0])
-
-for value in a[1:]:
-    current = root
-
-    while True:
-        if value < current.value:
-            if current.left is None:
-                current.left = Node(value)
-                break
-
-            current = current.left
-
-        else:
-            if current.right is None:
-                current.right = Node(value)
-                break
-
-            current = current.right
+for _ in range(t):
+    a = input().split()
+    a.sort(key=len)
+    print(*a)
 \`\`\`
 
-Problem A — Mountains
+Problem B — Merge Two Sorted Arrays
 
 \`\`\`python
-import sys
+n = int(input())
+a = list(map(int, input().split()))
+m = int(input())
+b = list(map(int, input().split()))
 
-input = sys.stdin.readline
+print(*sorted(a + b))
+\`\`\`
 
+Problem C — Sorter
+
+\`\`\`python
 n, m = map(int, input().split())
-a = list(map(int, input().split()))
+a = [list(map(int, input().split())) for _ in range(n)]
 
-order = sorted(range(n), key=lambda i: (a[i], -i))
+a.sort(key=lambda x: (-sum(x), x))
 
-left = [-1] * n
-right = [-1] * n
-stack = []
+for row in a:
+    print(*row)
+\`\`\`
 
-for i in order:
-    last = -1
+Problem D — Count the Inversions
 
-    while stack and stack[-1] > i:
-        last = stack.pop()
+\`\`\`python
+def merge_sort(a):
+    if len(a) <= 1:
+        return a, 0
 
-    if stack:
-        right[stack[-1]] = i
+    mid = len(a) // 2
+    left, c1 = merge_sort(a[:mid])
+    right, c2 = merge_sort(a[mid:])
 
-    if last != -1:
-        left[i] = last
+    result = []
+    i = j = 0
+    count = c1 + c2
 
-    stack.append(i)
-
-for _ in range(m):
-    path = input().strip()
-    node = 0
-
-    for direction in path:
-        if direction == 'L':
-            node = left[node]
+    while i < len(left) and j < len(right):
+        if left[i] <= right[j]:
+            result.append(left[i])
+            i += 1
         else:
-            node = right[node]
+            result.append(right[j])
+            count += len(left) - i
+            j += 1
 
-        if node == -1:
-            break
+    result.extend(left[i:])
+    result.extend(right[j:])
 
-    print("YES" if node != -1 else "NO")
-\`\`\`
-
-Problem B — Get subtree
-
-\`\`\`python
-class Node:
-    def __init__(self, value):
-        self.value = value
-        self.left = None
-        self.right = None
+    return result, count
 
 
 n = int(input())
 a = list(map(int, input().split()))
-x = int(input())
 
-root = Node(a[0])
-
-for value in a[1:]:
-    current = root
-
-    while True:
-        if value < current.value:
-            if current.left is None:
-                current.left = Node(value)
-                break
-            current = current.left
-        else:
-            if current.right is None:
-                current.right = Node(value)
-                break
-            current = current.right
-
-current = root
-
-while current.value != x:
-    if x < current.value:
-        current = current.left
-    else:
-        current = current.right
-
-count = 0
-stack = [current]
-
-while stack:
-    node = stack.pop()
-    count += 1
-
-    if node.left is not None:
-        stack.append(node.left)
-
-    if node.right is not None:
-        stack.append(node.right)
-
-print(count)
+print(merge_sort(a)[1])
 \`\`\`
 
-Problem C — Christmas Gifts
-
-\`\`\`python
-class Node:
-    def __init__(self, value):
-        self.value = value
-        self.left = None
-        self.right = None
-
-
-n = int(input())
-a = list(map(int, input().split()))
-k = int(input())
-
-root = Node(a[0])
-
-for value in a[1:]:
-    current = root
-
-    while True:
-        if value < current.value:
-            if current.left is None:
-                current.left = Node(value)
-                break
-            current = current.left
-        else:
-            if current.right is None:
-                current.right = Node(value)
-                break
-            current = current.right
-
-current = root
-
-while current.value != k:
-    if k < current.value:
-        current = current.left
-    else:
-        current = current.right
-
-result = []
-stack = [current]
-
-while stack:
-    node = stack.pop()
-    result.append(node.value)
-
-    if node.right is not None:
-        stack.append(node.right)
-
-    if node.left is not None:
-        stack.append(node.left)
-
-print(*result)
-\`\`\`
-
-Problem D — Aureole
-
-\`\`\`python
-n = int(input())
-p = list(map(int, input().split()))
-
-pos = [0] * (n + 1)
-
-for i, value in enumerate(p):
-    pos[value] = i
-
-left = [0] * (n + 1)
-right = [0] * (n + 1)
-stack = []
-
-for value in range(1, n + 1):
-    last = 0
-
-    while stack and pos[stack[-1]] > pos[value]:
-        last = stack.pop()
-
-    if stack:
-        right[stack[-1]] = value
-
-    if last:
-        left[value] = last
-
-    stack.append(value)
-
-root = stack[0]
-
-sums = []
-stack = [(root, 0)]
-
-while stack:
-    node, level = stack.pop()
-
-    if level == len(sums):
-        sums.append(0)
-
-    sums[level] += node
-
-    if right[node]:
-        stack.append((right[node], level + 1))
-
-    if left[node]:
-        stack.append((left[node], level + 1))
-
-print(len(sums))
-print(*sums)
-\`\`\`
-
-Problem E — Width
-
-\`\`\`python
-from collections import deque
-
-n = int(input())
-
-left = [0] * (n + 1)
-right = [0] * (n + 1)
-
-for _ in range(n - 1):
-    x, y, z = map(int, input().split())
-
-    if z == 0:
-        left[x] = y
-    else:
-        right[x] = y
-
-queue = deque([1])
-answer = 0
-
-while queue:
-    size = len(queue)
-    answer = max(answer, size)
-
-    for _ in range(size):
-        node = queue.popleft()
-
-        if left[node]:
-            queue.append(left[node])
-
-        if right[node]:
-            queue.append(right[node])
-
-print(answer)
-\`\`\`
-
-Problem F — Triangle Binary Search Tree
+Problem E — Squares of a Sorted Array
 
 \`\`\`python
 n = int(input())
 a = list(map(int, input().split()))
 
-pos = [0] * (n + 1)
+a.sort(key=abs)
 
-for i, value in enumerate(a):
-    pos[value] = i
-
-left = [0] * (n + 1)
-right = [0] * (n + 1)
-stack = []
-
-for value in range(1, n + 1):
-    last = 0
-
-    while stack and pos[stack[-1]] > pos[value]:
-        last = stack.pop()
-
-    if stack:
-        right[stack[-1]] = value
-
-    if last:
-        left[value] = last
-
-    stack.append(value)
-
-answer = 0
-
-for value in range(1, n + 1):
-    if left[value] and right[value]:
-        answer += 1
-
-print(answer)
-\`\`\`
-
-Problem G — Killua and Hunter exam
-
-\`\`\`python
-n = int(input())
-a = list(map(int, input().split()))
-
-first = {}
-
-for i, value in enumerate(a):
-    if value not in first:
-        first[value] = i
-
-nodes = sorted(first.items())
-m = len(nodes)
-
-left = [-1] * m
-right = [-1] * m
-stack = []
-
-for i in range(m):
-    last = -1
-
-    while stack and nodes[stack[-1]][1] > nodes[i][1]:
-        last = stack.pop()
-
-    if stack:
-        right[stack[-1]] = i
-
-    if last != -1:
-        left[i] = last
-
-    stack.append(i)
-
-root = stack[0]
-
-order = []
-stack = [root]
-
-while stack:
-    node = stack.pop()
-    order.append(node)
-
-    if left[node] != -1:
-        stack.append(left[node])
-
-    if right[node] != -1:
-        stack.append(right[node])
-
-height = [0] * m
-answer = 1
-
-for node in reversed(order):
-    left_height = height[left[node]] if left[node] != -1 else 0
-    right_height = height[right[node]] if right[node] != -1 else 0
-
-    height[node] = max(left_height, right_height) + 1
-    answer = max(answer, left_height + right_height + 1)
-
-print(answer)
-\`\`\`
-
-Problem H — Greater Sum Tree
-
-\`\`\`python
-class Node:
-    def __init__(self, value):
-        self.value = value
-        self.left = None
-        self.right = None
-
-
-def insert(root, value):
-    if root is None:
-        return Node(value)
-
-    if value < root.value:
-        root.left = insert(root.left, value)
-    else:
-        root.right = insert(root.right, value)
-
-    return root
-
-
-def transform(node):
-    global total
-
-    if node is None:
-        return
-
-    transform(node.right)
-
-    total += node.value
-    node.value = total
-    result.append(node.value)
-
-    transform(node.left)
-
-
-n = int(input())
-a = list(map(int, input().split()))
-
-root = None
-
-for value in a:
-    root = insert(root, value)
-
-total = 0
-result = []
-
-transform(root)
-
-print(*result)
-\`\`\`
-
-Problem I
-
-\`\`\`python
-N, K = map(int, input().split())
-a = list(map(int, input().split()))
-
-if K > N:
-    print(-1)
-else:
-    a.sort()
-    print(a[K - 1])
-\`\`\`
-
-Problem J
-
-\`\`\`python
-n = int(input())
-p = list(map(int, input().split()))
-
-pos = [0] * (n + 1)
-
-for i in range(n):
-    pos[p[i]] = i
-
-left = [-1] * (n + 1)
-right = [-1] * (n + 1)
-stack = []
-
-for value in range(1, n + 1):
-    last = -1
-
-    while stack and pos[stack[-1]] > pos[value]:
-        last = stack.pop()
-
-    if stack:
-        right[stack[-1]] = value
-
-    if last != -1:
-        left[value] = last
-
-    stack.append(value)
-
-leaves = 0
-
-for value in range(1, n + 1):
-    if left[value] == -1 and right[value] == -1:
-        leaves += 1
-
-print(leaves)
+print(*(x ** 2 for x in a))
 \`\`\``);
 });
 
